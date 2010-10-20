@@ -323,7 +323,7 @@ function '.$form_name.'_exec_commands(cmds) {
 function '.$form_name.'_dialog(url) {
   '.$form_name.'_dialog_ok = 0
   url += ((url.indexOf("?") ? "&" : "?") + "_ajax=dialog")
-  $.modal("<iframe src=\'"+url+"\' width=100% height=100% style=\'border:0\'></iframe>",
+  $.modal("<iframe src=\'"+url+"\' width=100% height=500 style=\'border:0\'></iframe>",
          {minWidth: "90%",
           minHeight: "90%",
           width: "90%",
