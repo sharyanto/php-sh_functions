@@ -1,0 +1,35 @@
+# id_ID
+uploaded_F: "telah diupload %s"
+delete_uploaded_file: Hapus file yang telah diupload
+day: Tgl
+mon: Bln
+year: Tahun
+
+mon1: Jan
+mon2: Feb
+mon3: Mar
+mon4: Apr
+mon5: Mei
+mon6: Jun
+mon7: Jul
+mon8: Agt
+mon9: Sep
+mon10: Okt
+mon11: Nop
+mon12: Des
+
+err_must_not_be_specified: Tidak boleh disebutkan
+err_required: Harus diisi
+err_upload_required: Harus diupload
+err_integer_expected: Harus bilangan bulat
+err_decimal_expected: Harus bilangan desimal
+err_too_small: Terlalu kecil
+err_too_large: Terlalu besar
+err_too_small_S: "Terlalu kecil, minimum %s"
+err_too_large_S: "Terlalu besar, maksimum %s"
+err_incorrect_value: Nilai tidak benar
+err_must_be_selected: Harus dipilih
+
+please_wait: Mohon tunggu...
+success: Sukses
+failed: Gagal

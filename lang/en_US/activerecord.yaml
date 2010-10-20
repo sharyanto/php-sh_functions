@@ -1,0 +1,35 @@
+# en_US
+uploaded_F: "uploaded %s"
+delete_uploaded_file: Delete uploaded file
+day: Day
+mon: Mon
+year: Year
+
+mon1: Jan
+mon2: Feb
+mon3: Mar
+mon4: Apr
+mon5: May
+mon6: Jun
+mon7: Jul
+mon8: Aug
+mon9: Sep
+mon10: Oct
+mon11: Nov
+mon12: Dec
+
+err_must_not_be_specified: Must not be specified
+err_required: Required
+err_upload_required: Must be uploaded
+err_integer_expected: Integer number expected
+err_decimal_expected: Decimal number expected
+err_too_small: Too small
+err_too_large: Too large
+err_too_small_S: "Too small, minimum %s"
+err_too_large_S: "Too large, maximum %s"
+err_incorrect_value: Incorrect value
+err_must_be_selected: Must be selected
+
+please_wait: Please wait...
+success: Success
+failed: Failed

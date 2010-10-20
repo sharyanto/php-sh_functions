@@ -1,0 +1,24 @@
+# id_ID
+item_X_Y_of_Z: Item %d-%d dari %d
+first: Pertama
+previous: Sebelumnya
+next: Berikutnya
+last: Terakhir
+filter: Saring
+are_you_sure: "Yakin?"
+more_actions: Lebih banyak pilihan
+choose: Silakan pilih
+need_rows: Harap memilih satu atau lebih item dulu
+
+# simbol utk total dan average
+T_total: J
+A_average: R
+
+all: Semua
+none: Tidak Ada
+
+# ajax status bar
+ready: Siap
+updating: Memperbarui...
+failed: Gagal
+success: Berhasil

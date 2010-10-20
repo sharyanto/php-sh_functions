@@ -1,0 +1,24 @@
+# en_US
+item_X_Y_of_Z: Items %d-%d of %d
+first: First
+previous: Prev
+next: Next
+last: Last
+filter: Filter
+are_you_sure: "Are you sure?"
+more_actions: More actions
+choose: Please choose
+need_rows: Please select one or more items first
+
+# symbol for total and average
+T_total: T
+A_average: A
+
+all: All
+none: None
+
+# ajax status bar
+ready: Ready
+updating: Updating...
+failed: Failed
+success: Success
