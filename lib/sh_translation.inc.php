@@ -17,7 +17,7 @@ function load_lang_file($rel_path) {
   global $_Trans_Table, $_Lang, $_Lang_Dir;
 
   $path = "$_Lang_Dir/$_Lang/$rel_path";
-  if (!file_exists($path)) die("FATAL: Can't load language file for: lang=$_Lang, path=$rel_path");
+  if (!file_exists($path)) die("FATAL: Can't load language file for: lang=$_Lang, rel_path=$rel_path, path=$path");
   if (!extension_loaded("syck")) dl("syck.so");
 
   # load index first. XXX not yet implemented.
