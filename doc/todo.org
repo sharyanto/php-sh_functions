@@ -1,0 +1,11 @@
+* translation
+** TODO translation: implement multiple $_Lang_Dir
+** TODO translation: better, faster, more correct implementation
+
+* grid
+* activerecord
+
+** TODO activerecord: choices => array('foo'=>array('text1', 'text2')) or something like that
+
+pilihan boleh sama kan, mis: 1=Indonesia, 2=Jerman, 3=Polandia, 1=Repulik Indonesia.
+

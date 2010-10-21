@@ -1,14 +1,5 @@
 <?
 
-#
-# sh_translation.inc.php
-#
-
-# XXX implement multiple $_Lang_Dir
-# XXX better, faster, more correct implementation
-
-$SH_TRANSLATION_VERSION = "20081105";
-
 $_Lang_Dir = null;
 function set_lang_dir($path) {
   global $_Lang_Dir;
@@ -32,7 +23,7 @@ function load_lang_file($rel_path) {
   # load index first. XXX not yet implemented.
   if (!isset($_Trans_Table['index'])) {
   }
-             
+
   if (!isset($_Trans_Table[$_Lang])) $_Trans_Table[$_Lang] = array();
   $table = syck_load(file_get_contents($path));
   if (is_array($table)) {
