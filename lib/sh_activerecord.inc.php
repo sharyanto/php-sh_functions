@@ -335,7 +335,7 @@ function activerecord_genhtml_form(&$activerecord, $values, $is_adding=true) { #
 
   $fields = $activerecord['fields'];
   $tv = array(); activerecord_fill($activerecord, $tv, $values);
-  $issubmit = isset($values['_submit']) && $value['_submit']; if ($issubmit) activerecord_check($activerecord, $tv, $values, $is_adding);
+  $issubmit = isset($values['_submit']) && $values['_submit']; if ($issubmit) activerecord_check($activerecord, $tv, $values, $is_adding);
 
   $containfiles = false;
   foreach ($fields as $f) {
@@ -350,6 +350,7 @@ function activerecord_genhtml_form(&$activerecord, $values, $is_adding=true) { #
   $fname = isset($activerecord['name']) ? $activerecord['name'] : 'form1a';
 
   $html = "";
+  #$html .= "issubmit = $issubmit, values = <pre>".print_r($values, true)."</pre>, tv = <pre>".print_r($tv, true)."</pre>";
   $html .= '
 <script>
 function '.$fname.'_status_bar(text, duration) {
