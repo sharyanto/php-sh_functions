@@ -355,7 +355,7 @@ function '.$form_name.'_dialog(url) {
 
   if (isset($grid['row_count_func'])) {
     $row_count = $grid['row_count_func']($_REQUEST);
-  } else {
+  } elseif (!isset($grid['simple_paging']) || !$grid['simple_paging']) {
     if (isset($grid['sql_customcountfunc'])) {
       $sql = $grid['sql_customcountfunc']($sql_wheres);
     } else {
@@ -369,26 +369,32 @@ function '.$form_name.'_dialog(url) {
     if (isset($grid['debug_timesql']) && $grid['debug_timesql']) echo "DEBUG: sql (count) time=",sprintf("%.3fs", $time2-$time1),"<br>";
     list ($row_count) = mysql_fetch_row($res);
   }
-  $grid_vars['_row_count'] = $row_count;
+  $grid_vars['_row_count'] = isset($row_count) ? $row_count : null;
 
   # page number
-  $page_count = ceil($row_count / $page_size);
-  if ($page > $page_count) $page = $page_count; if ($page < 1) $page = 1;
+  if (isset($row_count)) {
+    $page_count = ceil($row_count / $page_size);
+    if ($page > $page_count) $page = $page_count;
+  }
+  if ($page < 1) $page = 1;
   $grid_vars['_page'] = $page;
   $grid_vars['_page_count'] = $page;
 
-  # for "Showing item X to Y of Z"
-  $item_start = 0;
-  $item_end = 0;
-  if ($row_count) {
+  # for "Showing item X to Y (of Z)"
+  if (isset($row_count)) {
+    if ($row_count) {
+      $item_start = ($page-1)*$page_size+1;
+      $item_end = min($row_count, $page*$page_size);
+    } else {
+      $item_start = 0;
+      $item_end = 0;
+    }
+    $limit_num = $page_size;
+  } else {
     $item_start = ($page-1)*$page_size+1;
-    $item_end = min($row_count, $page*$page_size);
+    $limit_num = $page_size+1;
   }
-  $grid_vars['_item_start'] = $item_start;
-  $grid_vars['_item_end'] = $item_end;
-
   $limit_start = max($item_start-1, 0);
-  $limit_num = $page_size;
 
   if (isset($grid['row_func'])) {
     $rows = $grid['row_func']($_REQUEST, $sortf, $sorto, $limit_start, $limit_num, $sort2f, $sort2o, $sort3f, $sort3o);
@@ -420,7 +426,21 @@ function '.$form_name.'_dialog(url) {
     #print_r($rows);
   }
 
-  # build display
+  if (isset($row_count)) {
+    $has_next_page = $page < $page_count;
+  } else {
+    $has_next_page = false;
+    if (count($rows) > $page_size) {
+      $has_next_page = true;
+      array_pop($rows);
+    }
+    $item_end = $item_start + (count($row) ? count($rows)-1 : 0);
+  }
+
+  $grid_vars['_item_start'] = $item_start;
+  $grid_vars['_item_end'] = $item_end;
+
+# build display
 
   # set/store colors
   $filterbar_bgcolor = isset($grid['filterbar_bgcolor']) ? $grid['filterbar_bgcolor'] : '';
@@ -458,7 +478,11 @@ function '.$form_name.'_dialog(url) {
   # -- paging bar
   $ajax = isset($grid['ajax_paging']) && $grid['ajax_paging'];
   $_html_paging_bar  = "<tr><td align=right>";
-  $_html_paging_bar .= sprintf(_t("item_X_Y_of_Z"), $item_start, $item_end, $row_count)."&nbsp;&nbsp;&nbsp;";
+  $_html_paging_bar .= (isset($row_count) ?
+    sprintf(_t("item_X_Y_of_Z"), $item_start, $item_end, $row_count) :
+    sprintf(_t("item_X_Y"), $item_start, $item_end)
+                        ).
+    "&nbsp;&nbsp;&nbsp;";
 
   $url = "$self?_page=1&_sort=$sort&_sort2=$sort2&_sort3=$sort3$filters_urlp$ba_urlp";
   $text = _t("first");
@@ -484,23 +508,25 @@ function '.$form_name.'_dialog(url) {
 
   $url = "$self?_page=".($page+1)."&_sort=$sort&_sort2=$sort2&_sort3=$sort3$filters_urlp$ba_urlp";
   $text = _t("next");
-  if ($page < $page_count) {
+  if ($has_next_page) {
     $_html_paging_bar .= "<a".
     ($ajax ? " class=ajaxAction onClick=\"{$form_name}_update_grid(this.href);return false;\"" : "").
     " href=$url>$text</a>";
   } else {
     $_html_paging_bar .= $text;
   }
-  $_html_paging_bar .= " | ";
 
-  $url = "$self?_page=$page_count&_sort=$sort&_sort2=$sort2&_sort3=$sort3$filters_urlp$ba_urlp";
-  $text = _t("last");
-  if ($page < $page_count) {
-    $_html_paging_bar .= "<a".
-    ($ajax ? " class=ajaxAction onClick=\"{$form_name}_update_grid(this.href);return false;\"" : "").
-    " href=$url>$text</a>";
-  } else {
-    $_html_paging_bar .= $text;
+  if (isset($row_count)) {
+    $_html_paging_bar .= " | ";
+    $url = "$self?_page=$page_count&_sort=$sort&_sort2=$sort2&_sort3=$sort3$filters_urlp$ba_urlp";
+    $text = _t("last");
+    if ($page < $page_count) {
+      $_html_paging_bar .= "<a".
+        ($ajax ? " class=ajaxAction onClick=\"{$form_name}_update_grid(this.href);return false;\"" : "").
+        " href=$url>$text</a>";
+    } else {
+      $_html_paging_bar .= $text;
+    }
   }
 
   $_html_paging_bar .= "</td></tr>";
@@ -932,7 +958,7 @@ function '.$form_name.'_dialog(url) {
 
   # -- total rows, starting row, and row checksums in javascript variables, for ajax update
   $html_script2 = "<script>
-  var {$form_name}_row_count = $row_count
+  var {$form_name}_row_count = ".(isset($row_count) ? $row_count : 'undefined')."
   var {$form_name}_row_start = $row_start
   var {$form_name}_page_size = $page_size
   var {$form_name}_row_checksums = ".json_encode($checksums)."

@@ -1,5 +1,6 @@
 # en_US
 item_X_Y_of_Z: Items %d-%d of %d
+item_X_Y: Items %d-%d
 first: First
 previous: Prev
 next: Next

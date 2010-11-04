@@ -400,7 +400,6 @@ $page_size, $sort2f, $sort2o, $sort3f, $sort3o).
 
 akan dipanggil dengan argumen: ($_REQUEST)
 
-
 ====yang berhubungan dengan URL====
 
 * browse_action => STRING (optional)
@@ -412,6 +411,24 @@ atau beberapa grid berbeda, tergantung dari parameter _action.
 ====yang berhubungan dengan tampilan====
 
 * page_size => INT (optional, default=25)
+
+* simple_paging => BOOL (optional, default false)
+
+ini berhubungan dengan performance jika database besar/SQL lambat. jika diset 0
+(default), maka librari akan melakukan 2 panggilan SQL yaitu pertama "SELECT
+COUNT(*)" untuk menghitung jumlah row yang ada, dan satu lagi "SELECT column..."
+untuk mengambil datanya.
+
+jika simple_paging diset 1, maka perintah "SELECT COUNT(*)" akan diskip. sebagai
+gantinya, SELECT akan mengambil pagesize+1 buah row (1 row ekstra untuk
+mengetahui apakah masih ada halaman berikutnya). akibatnya, kita hanya bisa
+memberikan link [First page] (jika page > 1), [Previous Page] (jika page > 1),
+atau [Next Page] (jika row yang direturn > pagesize). link [Last Page] dan
+keterangan jumlah row tidak dapat ditampilkan. tapi, keuntungannya, waktu yang
+diperlukan bisa hanya sekitar setengah karena kita hanya melakukan 1x SQL saja.
+
+(tapi dalam kenyataannya, dengan cache database, penyingkatan waktu yang
+diperoleh tidak sampai setengahnya?)
 
 * ajax_filter => BOOL (optional, default 0)
 

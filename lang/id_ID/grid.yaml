@@ -1,5 +1,6 @@
 # id_ID
 item_X_Y_of_Z: Item %d-%d dari %d
+item_X_Y: Item %d-%d
 first: Pertama
 previous: Sebelumnya
 next: Berikutnya
