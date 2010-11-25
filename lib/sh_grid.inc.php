@@ -615,7 +615,7 @@ function '.$form_name.'_dialog(url) {
       " value=\"$action[title]\" onClick=\"".
       (isset($action['target']) ? "this.form.target='$action[target]';" : "this.form.target='';").
       (isset($action['need_rows']) && $action['need_rows'] ? "if(!{$form_name}_some_cb_selected()){alert('"._t("need_rows")."');return false}" : "").
-      (isset($action['jsconfirm']) && $action['jsconfirm'] ? "if(!confirm('"._t("are_you_sure")."'))return false;" : "").
+      (isset($action['jsconfirm']) && $action['jsconfirm'] ? "if(!confirm(".jsstring_quote(isset($action['confirm_text']) ? $action['confirm_text'] : _t("are_you_sure"))."))return false;" : "").
       # XXX pre_ajax_commands
       ($ajax == 'update' ? "{$form_name}_ajax_submit(this);" : "").
       ($ajax == 'dialog' ? "{$form_name}_dialog({$form_name}_submit2url(this));" : "").
@@ -795,7 +795,7 @@ function '.$form_name.'_dialog(url) {
         $html_data_row .= "<a href=".$row_vars["ra_{$ra['name']}_url"].
           ($ajax ? " class=ajaxAction" : "").
           " onClick=\"".
-          (isset($ra['jsconfirm']) && $ra['jsconfirm'] ? "if(!confirm('"._t("are_you_sure")."'))return false;" : "").
+          (isset($ra['jsconfirm']) && $ra['jsconfirm'] ? "if(!confirm(".jsstring_quote(isset($ra['confirm_text']) ? $ra['confirm_text'] : _t("are_you_sure"))."))return false;" : "").
           # XXX pre_ajax_commands
           ($ajax=='update' ? "{$form_name}_update_grid(this.href);":"").
           ($ajax=='dialog' ? "{$form_name}_dialog(this.href);":"").
