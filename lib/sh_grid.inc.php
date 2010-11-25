@@ -608,9 +608,12 @@ function '.$form_name.'_dialog(url) {
 
   if (isset($grid['grid_actions'])) { foreach ($grid['grid_actions'] as $action) {
     $ajax = isset($action['ajax']) ? $action['ajax'] : '';
+    $classes = array();
+    if ($ajax) $classes[] = "ajaxAction";
+    if ($action['class']) $classes[] = $action['class'];
     $html_af_bar .= "    <td>";
     $html_af_bar .= "<input type=submit".
-      ($ajax ? " class=ajaxAction" : "").
+      (count($classes) ? " class=\"".join(" ", $classes)."\"" : "").
       (isset($action['name']) ? " name=_action:$action[name]" : " name=_action").
       " value=\"$action[title]\" onClick=\"".
       (isset($action['target']) ? "this.form.target='$action[target]';" : "this.form.target='';").
@@ -792,8 +795,11 @@ function '.$form_name.'_dialog(url) {
         if (isset($ra['condfunc']) && !($ra['condfunc']($row_vars))) continue;
 
         $ajax = isset($ra['ajax']) ? $ra['ajax'] : '';
+        $classes = array();
+        if ($ajax) $classes[] = "ajaxAction";
+        if ($ra['class']) $classes[] = $ra['class'];
         $html_data_row .= "<a href=".$row_vars["ra_{$ra['name']}_url"].
-          ($ajax ? " class=ajaxAction" : "").
+          (count($classes) ? " class=\"".join(" ", $classes)."\"" : "").
           " onClick=\"".
           (isset($ra['jsconfirm']) && $ra['jsconfirm'] ? "if(!confirm(".jsstring_quote(isset($ra['confirm_text']) ? $ra['confirm_text'] : _t("are_you_sure"))."))return false;" : "").
           # XXX pre_ajax_commands
