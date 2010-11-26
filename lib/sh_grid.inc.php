@@ -610,7 +610,7 @@ function '.$form_name.'_dialog(url) {
     $ajax = isset($action['ajax']) ? $action['ajax'] : '';
     $classes = array();
     if ($ajax) $classes[] = "ajaxAction";
-    if ($action['class']) $classes[] = $action['class'];
+    if (isset($action['class'])) $classes[] = $action['class'];
     $html_af_bar .= "    <td>";
     $html_af_bar .= "<input type=submit".
       (count($classes) ? " class=\"".join(" ", $classes)."\"" : "").
@@ -797,7 +797,7 @@ function '.$form_name.'_dialog(url) {
         $ajax = isset($ra['ajax']) ? $ra['ajax'] : '';
         $classes = array();
         if ($ajax) $classes[] = "ajaxAction";
-        if ($ra['class']) $classes[] = $ra['class'];
+        if (isset($ra['class'])) $classes[] = $ra['class'];
         $html_data_row .= "<a href=".$row_vars["ra_{$ra['name']}_url"].
           (count($classes) ? " class=\"".join(" ", $classes)."\"" : "").
           " onClick=\"".
