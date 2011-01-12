@@ -1,9 +1,14 @@
 <?
 
-$_Lang_Dir = null;
+$_Lang_Dirs = array();
 function set_lang_dir($path) {
-  global $_Lang_Dir;
-  $_Lang_Dir = $path;
+  global $_Lang_Dirs;
+  $_Lang_Dirs = array($path);
+}
+
+function add_lang_dir($path) {
+  global $_Lang_Dirs;
+  $_Lang_Dirs[] = $path;
 }
 
 $_Lang = null;
@@ -14,10 +19,16 @@ function set_lang($lang) {
 
 $_Trans_Table = array(); # array(LANG => array(absname=>translation, absname=>translation), 'index'=>..., )
 function load_lang_file($rel_path) {
-  global $_Trans_Table, $_Lang, $_Lang_Dir;
+  global $_Trans_Table, $_Lang, $_Lang_Dirs;
 
-  $path = "$_Lang_Dir/$_Lang/$rel_path";
-  if (!file_exists($path)) die("FATAL: Can't load language file for: lang=$_Lang, rel_path=$rel_path, path=$path");
+  $found = false;
+  foreach ($_Lang_Dirs as $ld) {
+    $path = "$ld/$_Lang/$rel_path";
+    if (!file_exists($path)) continue;
+    $found = true; break;
+  }
+  if (!$found) die("FATAL: Can't load language file for: lang_dirs=[".join(", ", $_Lang_Dirs)."], lang=$_Lang, rel_path=$rel_path");
+
   if (!extension_loaded("syck")) dl("syck.so");
 
   # load index first. XXX not yet implemented.
