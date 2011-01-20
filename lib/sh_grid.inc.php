@@ -353,23 +353,25 @@ function '.$form_name.'_dialog(url) {
     if ($res !== "") $sql_wheres[] = "($res)";
   }}
 
-  if (isset($grid['row_count_func'])) {
-    $row_count = $grid['row_count_func']($_REQUEST);
-  } elseif (!isset($grid['simple_paging']) || !$grid['simple_paging']) {
-    if (isset($grid['sql_customcountfunc'])) {
-      $sql = $grid['sql_customcountfunc']($sql_wheres);
+  if (!isset($grid['simple_paging']) || !$grid['simple_paging']) {
+    if (isset($grid['row_count_func'])) {
+      $row_count = $grid['row_count_func']($_REQUEST);
     } else {
-      $sql = "SELECT COUNT(1) FROM $grid[sql_table]".
-             (count($sql_wheres) ? " WHERE ".join(" AND ", $sql_wheres) : "");
+      if (isset($grid['sql_customcountfunc'])) {
+        $sql = $grid['sql_customcountfunc']($sql_wheres);
+      } else {
+        $sql = "SELECT COUNT(1) FROM $grid[sql_table]".
+          (count($sql_wheres) ? " WHERE ".join(" AND ", $sql_wheres) : "");
+      }
+      if (isset($grid['debug_showsql']) && $grid['debug_showsql']) echo $sql,"<br>";
+      $time1 = microtime(true);
+      $res = mysql_query($sql) or die("ERR20041123A[show_grid]: ".mysql_error().", SQL=$sql");
+      $time2 = microtime(true);
+      if (isset($grid['debug_timesql']) && $grid['debug_timesql']) echo "DEBUG: sql (count) time=",sprintf("%.3fs", $time2-$time1),"<br>";
+      list ($row_count) = mysql_fetch_row($res);
     }
-    if (isset($grid['debug_showsql']) && $grid['debug_showsql']) echo $sql,"<br>";
-    $time1 = microtime(true);
-    $res = mysql_query($sql) or die("ERR20041123A[show_grid]: ".mysql_error().", SQL=$sql");
-    $time2 = microtime(true);
-    if (isset($grid['debug_timesql']) && $grid['debug_timesql']) echo "DEBUG: sql (count) time=",sprintf("%.3fs", $time2-$time1),"<br>";
-    list ($row_count) = mysql_fetch_row($res);
+    $grid_vars['_row_count'] = isset($row_count) ? $row_count : null;
   }
-  $grid_vars['_row_count'] = isset($row_count) ? $row_count : null;
 
   # page number
   if (isset($row_count)) {
