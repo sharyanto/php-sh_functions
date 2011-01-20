@@ -806,7 +806,7 @@ function '.$form_name.'_dialog(url) {
           ($ajax=='update' ? "{$form_name}_update_grid(this.href);":"").
           ($ajax=='dialog' ? "{$form_name}_dialog(this.href);":"").
           ($ajax ? "return false;" : "return true;").
-          "\">$ra[title]</a> ";
+          "\">".($ra['icon'] ? "<img src=\"$ra[icon]\" title=\"$ra[title]\" alt=\"$ra[title]\">" : $ra['title'])."</a> ";
       }}
       $html_data_row .= "</td>";
     }
