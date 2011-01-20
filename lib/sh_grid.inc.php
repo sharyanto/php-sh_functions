@@ -788,7 +788,7 @@ function '.$form_name.'_dialog(url) {
 
     # tampilkan row actions
     if (!isset($grid['hide_rowactions']) || !$grid['hide_rowactions']) {
-      $html_data_row .= "<td".
+      $html_data_row .= "<td class=rowActions".
         (isset($grid['nowrap_rowactions']) && $grid['nowrap_rowactions'] ?" nowrap" : "").
         ($row_bgcolors[$i] ? " bgcolor='".$row_bgcolors[$i]."'" : "").">";
       if (isset($grid['row_actions'])) { foreach ($grid['row_actions'] as $ra) {
