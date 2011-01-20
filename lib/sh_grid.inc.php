@@ -436,7 +436,7 @@ function '.$form_name.'_dialog(url) {
       $has_next_page = true;
       array_pop($rows);
     }
-    $item_end = $item_start + (count($row) ? count($rows)-1 : 0);
+    $item_end = $item_start + (count($rows) ? count($rows)-1 : 0);
   }
 
   $grid_vars['_item_start'] = $item_start;
