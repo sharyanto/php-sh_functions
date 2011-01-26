@@ -438,4 +438,10 @@ function humandiff($ar1, $ar2, $separator=null) {
   }
 }
 
+function send_expire_headers() {
+    header("Expires: Tue, 01 Jan 1991 00:00:00 GMT");
+    header("Cache-Control: no-cache");
+    header("Pragma: no-cache");
+}
+
 ?>
