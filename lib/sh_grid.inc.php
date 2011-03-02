@@ -928,9 +928,9 @@ function '.$form_name.'_dialog(url) {
     $old_sorts     = isset($_REQUEST['_sorts']) ? $_REQUEST['_sorts'] : '';
     $old_filters   = isset($_REQUEST['_filters']) ? $_REQUEST['_filters'] : '';
     $res = array();
-    if ($row_count != $old_row_count) $res[] = array('update_row_count', $row_count);
+    if (isset($row_count) && $row_count != $old_row_count) $res[] = array('update_row_count', $row_count);
     if ($row_start != $old_row_start) $res[] = array('update_row_start', $row_start);
-    if ($row_count != $old_row_count || $row_start != $old_row_start) {
+    if (isset($row_count) && $row_count != $old_row_count || $row_start != $old_row_start) {
       $res[] = array('update_top_paging_bar', $html_paging_bar_top);
       $res[] = array('update_bottom_paging_bar', $html_paging_bar_bottom);
     }
