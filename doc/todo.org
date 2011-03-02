@@ -3,7 +3,14 @@
 ** TODO translation: better, faster, more correct implementation
 
 * grid
-** TODO saat ini simple_paging gak compatible dengan ajax paging?
+** TODO jika simple_paging=1, maka halaman belum diset ke max_page jika lebih
+contoh kasus: sedang di halaman 1, ada +- 100 result, 25 per page. lalu kita
+halaman 2 (menampilkan 26-50), link Prev & Next hidup. lalu kita nambah filter,
+sehingga result set hanya 24. maka hasilnya adalah halaman mejadi kosong, nav
+bar menunjukkan item 26-26 (tapi gak adaan). kita harus Previous dulu (ke
+halaman 1) utk liat. kurang intuitif. harusnya selalu direset ke halaman 1 aja
+kali ya jika simple_paging lalu ada perubahan filter.
+
 * activerecord
 
 ** TODO activerecord: choices => array('foo'=>array('text1', 'text2')) or something like that
