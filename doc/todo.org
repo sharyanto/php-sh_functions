@@ -3,7 +3,7 @@
 ** TODO translation: better, faster, more correct implementation
 
 * grid
-** TODO saat ini simple_paging gak compatible dengan ajax paging
+** TODO saat ini simple_paging gak compatible dengan ajax paging?
 * activerecord
 
 ** TODO activerecord: choices => array('foo'=>array('text1', 'text2')) or something like that
