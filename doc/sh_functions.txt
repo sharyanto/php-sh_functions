@@ -73,7 +73,7 @@ grid actions adalah action yang berlaku bagi satu atau lebih row yang diseleksi
 
 filter ...
 
-paging bar ...
+paging (+ export link) bar ...
 
 row header bar ...
 
@@ -498,7 +498,7 @@ ASC or DESC
 * default_sort3_column
 * default_sort3_column_order
 
-=====hide parts=====
+=====show/hide parts=====
 
 * hide_pagingbar => BOOL (optional, default=false)
 * hide_filterbar => BOOL (optional, default=false)
@@ -513,6 +513,8 @@ hidupkan hide_pagingbar. jika grid tidak memiliki grid actions, maka kita bisa
 matikan checkboxes, dsb. jika semua di atas dimatikan, maka yang muncul hanyalah
 sebuah tabel berisi kolom2x yang bisa disort, tanpa ada paging, row actions,
 checkboxes, dsb.
+
+* show_csv_export_link => BOOL (optional, default=false)
 
 =====yang berhubungan dengan warna=====
 

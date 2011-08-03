@@ -4,11 +4,22 @@ function grid_genhtml(&$grid) {
   return _grid($grid, 'genhtml');
 }
 
+function grid_exportcsv(&$grid) {
+  return _grid($grid, 'exportcsv');
+}
+
 function grid_urlprefix(&$grid) {
   return _grid($grid, 'urlprefix');
 }
 
-# func: genhtml, urlprefix
+# XXX copy-pasted from mkey
+function _csvq($str) {
+  $str = preg_replace('/([\015\012\011])+/', ' ', $str);
+  $str = preg_replace('/"/', "'", $str);
+  return "\"$str\"";
+}
+
+# func: genhtml, exportcsv, urlprefix
 function _grid(&$grid, $func) {
 
   # utk template substitution
@@ -353,7 +364,7 @@ function '.$form_name.'_dialog(url) {
     if ($res !== "") $sql_wheres[] = "($res)";
   }}
 
-  if (!isset($grid['simple_paging']) || !$grid['simple_paging']) {
+  if ((!isset($grid['simple_paging']) || !$grid['simple_paging']) && $func != 'exportcsv') {
     if (isset($grid['row_count_func'])) {
       $row_count = $grid['row_count_func']($_REQUEST);
     } else {
@@ -413,7 +424,7 @@ function '.$form_name.'_dialog(url) {
       $sql = "SELECT $grid[sql_columns]".(count($extra_columns) ? ",".join(", ", $extra_columns) : "")." FROM $grid[sql_table]".
              (count($sql_wheres) ? " WHERE ".join(" AND ", $sql_wheres) : "").
              " ".$orderbyclause.
-             " LIMIT $limit_start,$limit_num";
+             ($func == 'exportcsv' ? "" : " LIMIT $limit_start,$limit_num");
     }
     $time1 = microtime(true);
     if (isset($grid['debug_showsql']) && $grid['debug_showsql']) echo $sql,"<br>";
@@ -441,6 +452,8 @@ function '.$form_name.'_dialog(url) {
 
   $grid_vars['_item_start'] = $item_start;
   $grid_vars['_item_end'] = $item_end;
+
+  $show_csv_export_link = isset($grid['show_csv_export_link']) ? $grid['show_csv_export_link'] : false;
 
 # build display
 
@@ -477,9 +490,13 @@ function '.$form_name.'_dialog(url) {
 <input type=hidden name=_sort2 value=$sort2>
 <input type=hidden name=_sort3 value=$sort3>\n\n";
 
-  # -- paging bar
+  # -- paging (+export link) bar
   $ajax = isset($grid['ajax_paging']) && $grid['ajax_paging'];
-  $_html_paging_bar  = "<tr><td align=right>";
+  $_html_paging_bar  = "<tr><td align=left>";
+  if ($show_csv_export_link) {
+    $_html_paging_bar .= "<a href=$self?_action=exportcsv&_sort=$sort&_sort2=$sort2&_sort3=$sort3$filters_urlp$ba_urlp>"._t("export_to_csv")."</a>";
+  }
+  $_html_paging_bar .= "</td><td align=right>";
   $_html_paging_bar .= (isset($row_count) ?
     sprintf(_t("item_X_Y_of_Z"), $item_start, $item_end, $row_count) :
     sprintf(_t("item_X_Y"), $item_start, $item_end)
@@ -658,6 +675,7 @@ function '.$form_name.'_dialog(url) {
       "<input type=checkbox name=_cball onClick=\"{$form_name}_select_unselect_all(this.checked);\" value=1>".
       ($rowheader_color ? "</font>" : "").
       "</td>";
+  $csv_header_row = "";
   foreach ($grid['columns'] as $col) {
     if (isset($col['hidden']) && $col['hidden']) continue;
     $n = isset($col['dbcolumn']) ? $col['dbcolumn'] : '';
@@ -700,6 +718,7 @@ function '.$form_name.'_dialog(url) {
     }
     $html_header_row .= ($rowheader_color ? "</font>" : "").
       "</td>";
+    $csv_header_row .= (strlen($csv_header_row) ? ";" : "") . _csvq($col['title']);
   }
   if (!isset($grid['hide_rowactions']) || !$grid['hide_rowactions'])
     $html_header_row .= "<td".
@@ -713,6 +732,7 @@ function '.$form_name.'_dialog(url) {
   $tots = array();
   $checksums = array();
   $html_data_rows = array();
+  $csv_data_rows = array();
   foreach ($rows as $row) {
     # utk template substitution
     $row_vars = array_merge($grid_vars, $row);
@@ -739,6 +759,7 @@ function '.$form_name.'_dialog(url) {
     }}
 
     $html_data_row = "  <tr class=\"dataRow".(isset($row_vars['__css_class']) ? " $row_vars[__css_class]":"")."\" id={$form_name}_row_$i>";
+    $csv_data_row = "";
     if (!isset($grid['hide_checkboxes']) || !$grid['hide_checkboxes'])
       $html_data_row .= "<td".
         ($row_bgcolors[$i] ? " bgcolor='".$row_bgcolors[$i]."'" : "").">".
@@ -763,14 +784,18 @@ function '.$form_name.'_dialog(url) {
                    (isset($bgcolor) && $bgcolor ? " bgcolor=\"$bgcolor\"" : "").
                    ">".
              (isset($color) && $color ? "<font color=\"$color\">" : "");
+      $csv_data_row .= strlen($csv_data_row) ? ";" : "";
 
       # print value
       if (isset($col['value_func'])) {
-        $html_data_row .= $col['value_func']($row_vars);
+        if ($func != 'exportcsv') $html_data_row .=       $col['value_func']($row_vars, "html");
+        if ($func == 'exportcsv') $csv_data_row  .= _csvq($col['value_func']($row_vars, "csv" ));
       } elseif (isset($col['value_template'])) {
-        $html_data_row .= filltemplate($col['value_template'], $row_vars);
+        if ($func != 'exportcsv') $html_data_row .=       filltemplate($col['value_template'], $row_vars);
+        if ($func == 'exportcsv') $csv_data_row  .= _csvq(filltemplate($col['value_template'], $row_vars, true));
       } else {
-        $html_data_row .= $row_vars[$col['dbcolumn']];
+        if ($func != 'exportcsv') $html_data_row .=       $row_vars[$col['dbcolumn']];
+        if ($func == 'exportcsv') $csv_data_row  .= _csvq($row_vars[$col['dbcolumn']]);
       }
 
       # collect total
@@ -814,10 +839,15 @@ function '.$form_name.'_dialog(url) {
       $html_data_row .= "</td>";
     }
     $html_data_row .= "</tr>\n";
+    $csv_data_row  .= "\n";
 
     $html_data_rows[] = $html_data_row;
+    $csv_data_rows[]  = $csv_data_row;
     $i++;
   }
+
+  if ($func == 'exportcsv')
+    return $csv_header_row . "\n" . join("", $csv_data_rows);
 
   while ($i < $page_size) {
     $html_data_rows[] = "  <tr style='display: none' class=dataRow id={$form_name}_row_$i></tr>\n";
@@ -850,7 +880,7 @@ function '.$form_name.'_dialog(url) {
     # print value
     if (isset($col['calc_total']) && $col['calc_total']) {
       if (isset($col['value_func'])) {
-        $html_tot_row .= $col['value_func']($row_vars);
+        $html_tot_row .= $col['value_func']($row_vars, "html");
       } elseif (isset($col['value_template'])) {
         $html_tot_row .= filltemplate($col['value_template'], $row_vars);
       } else {

@@ -23,3 +23,6 @@ ready: Ready
 updating: Updating...
 failed: Failed
 success: Success
+
+# export links
+export_to_csv: Export to CSV
