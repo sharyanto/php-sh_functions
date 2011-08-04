@@ -12,11 +12,16 @@ function grid_urlprefix(&$grid) {
   return _grid($grid, 'urlprefix');
 }
 
-# XXX copy-pasted from mkey
-function _csvq($str) {
-  $str = preg_replace('/([\015\012\011])+/', ' ', $str);
-  $str = preg_replace('/"/', "'", $str);
-  return "\"$str\"";
+# XXX copy-pasted from mkey, add array handling
+function _csvq($str_or_array) {
+  $array = is_array($str_or_array) ? $str_or_array : array($str_or_array);
+  $res = array();
+  foreach ($array as $el) {
+    $el = preg_replace('/([\015\012\011])+/', ' ', $el);
+    $el = preg_replace('/"/', "'", $el);
+    $res[] = "\"$el\"";
+  }
+  return join(";", $res);
 }
 
 # func: genhtml, exportcsv, urlprefix
@@ -727,7 +732,7 @@ function '.$form_name.'_dialog(url) {
     }
     $html_header_row .= ($rowheader_color ? "</font>" : "").
       "</td>";
-    $csv_header_row .= (strlen($csv_header_row) ? ";" : "") . _csvq($col['title']);
+    $csv_header_row .= (strlen($csv_header_row) ? ";" : "") . _csvq(isset($col['title_csv']) ? $col['title_csv'] : $col['title']);
   }
   if (!isset($grid['hide_rowactions']) || !$grid['hide_rowactions'])
     $html_header_row .= "<td".
