@@ -400,7 +400,6 @@ function '.$form_name.'_dialog(url) {
   # for "Showing item X to Y (of Z)"
   if ($no_paging) {
     $item_start = 1;
-    $item_end   = $row_count;
   } elseif (isset($row_count)) {
     if ($row_count) {
       $item_start = ($page-1)*$page_size+1;
@@ -448,6 +447,7 @@ function '.$form_name.'_dialog(url) {
 
   if ($no_paging) {
     $has_next_page = false;
+    $item_end = count($rows);
   } elseif (isset($row_count)) {
     $has_next_page = $page < $page_count;
   } else {
