@@ -364,7 +364,9 @@ function '.$form_name.'_dialog(url) {
     if ($res !== "") $sql_wheres[] = "($res)";
   }}
 
-  if ((!isset($grid['simple_paging']) || !$grid['simple_paging']) && $func != 'exportcsv') {
+  $no_paging = $func == 'exportcsv' ? true : false;
+
+  if ((!isset($grid['simple_paging']) || !$grid['simple_paging']) && !$no_paging) {
     if (isset($grid['row_count_func'])) {
       $row_count = $grid['row_count_func']($_REQUEST);
     } else {
@@ -385,7 +387,9 @@ function '.$form_name.'_dialog(url) {
   }
 
   # page number
-  if (isset($row_count)) {
+  if ($no_paging) {
+    $page_count = 1;
+  } elseif (isset($row_count)) {
     $page_count = ceil($row_count / $page_size);
     if ($page > $page_count) $page = $page_count;
   }
@@ -394,7 +398,10 @@ function '.$form_name.'_dialog(url) {
   $grid_vars['_page_count'] = $page;
 
   # for "Showing item X to Y (of Z)"
-  if (isset($row_count)) {
+  if ($no_paging) {
+    $item_start = 1;
+    $item_end   = $row_count;
+  } elseif (isset($row_count)) {
     if ($row_count) {
       $item_start = ($page-1)*$page_size+1;
       $item_end = min($row_count, $page*$page_size);
@@ -424,7 +431,7 @@ function '.$form_name.'_dialog(url) {
       $sql = "SELECT $grid[sql_columns]".(count($extra_columns) ? ",".join(", ", $extra_columns) : "")." FROM $grid[sql_table]".
              (count($sql_wheres) ? " WHERE ".join(" AND ", $sql_wheres) : "").
              " ".$orderbyclause.
-             ($func == 'exportcsv' ? "" : " LIMIT $limit_start,$limit_num");
+             ($no_paging ? "" : " LIMIT $limit_start,$limit_num");
     }
     $time1 = microtime(true);
     if (isset($grid['debug_showsql']) && $grid['debug_showsql']) echo $sql,"<br>";
@@ -439,7 +446,9 @@ function '.$form_name.'_dialog(url) {
     #print_r($rows);
   }
 
-  if (isset($row_count)) {
+  if ($no_paging) {
+    $has_next_page = false;
+  } elseif (isset($row_count)) {
     $has_next_page = $page < $page_count;
   } else {
     $has_next_page = false;
