@@ -34,7 +34,7 @@ function load_lang_file($rel_path) {
   }
 
   if (!isset($_Trans_Table[$_Lang])) $_Trans_Table[$_Lang] = array();
-  $table = syck_load(file_get_contents($path));
+  $table = yaml_parse_file($path);
   if (is_array($table)) {
     foreach ($table as $k => $v) {
       # check in index. XXX not yet implemented.
