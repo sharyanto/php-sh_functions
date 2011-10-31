@@ -235,8 +235,6 @@ function siteurl() {
 
 # returns an image object berisi thumbnail, tinggal dioutput pake imagepng(...), etc.
 function thumbnail($f, $width, $height) {
-  if (!extension_loaded("gd")) dl("gd.so");
-
   $fp = fopen($f, "rb"); $content = "";
   while (1) {
     $chunk = fread($fp, 64*1024);

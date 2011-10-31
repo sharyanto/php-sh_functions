@@ -29,8 +29,6 @@ function load_lang_file($rel_path) {
   }
   if (!$found) die("FATAL: Can't load language file for: lang_dirs=[".join(", ", $_Lang_Dirs)."], lang=$_Lang, rel_path=$rel_path");
 
-  if (!extension_loaded("syck")) dl("syck.so");
-
   # load index first. XXX not yet implemented.
   if (!isset($_Trans_Table['index'])) {
   }
