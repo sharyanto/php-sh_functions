@@ -224,13 +224,25 @@ function iddate($format, $timestamp=-1) {
   return preg_replace('/([YMdFHisDl])/e', "_iddate_sub('\\1',$timestamp)", $format);
 }
 
+# 2012-10-23 - gak dipake?
 function siteurl() {
-  global $_ENV;
+  return
+    (isset($_SERVER['HTTPS']) ? "https://" : "http://") .
+    $_SERVER['SERVER_NAME'] .
+    "/";
+}
+
+# 2012-10-23
+function myurl() {
+  $is_https = isset($_SERVER['HTTPS']);
+  $port = $_SERVER['SERVER_PORT'];
+  $is_default_port = $port == ($is_https ? 443 : 80);
 
   return
-    (isset($_ENV['HTTPS']) ? "https://" : "http://") .
-    $_ENV['SERVER_NAME'] .
-    "/";
+    ($is_https ? "https://" : "http://") .
+    $_SERVER['SERVER_NAME'] .
+    ($is_default_port ? "" : ":$port").
+    $_SERVER['REQUEST_URI'];
 }
 
 # returns an image object berisi thumbnail, tinggal dioutput pake imagepng(...), etc.
