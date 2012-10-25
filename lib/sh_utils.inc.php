@@ -245,6 +245,11 @@ function myurl() {
     $_SERVER['REQUEST_URI'];
 }
 
+# 2012-10-25
+function myurl_noquery() {
+  preg_replace('/\?.*/', '', myurl());
+}
+
 # returns an image object berisi thumbnail, tinggal dioutput pake imagepng(...), etc.
 function thumbnail($f, $width, $height) {
   $fp = fopen($f, "rb"); $content = "";
