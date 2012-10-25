@@ -247,7 +247,7 @@ function myurl() {
 
 # 2012-10-25
 function myurl_noquery() {
-  preg_replace('/\?.*/', '', myurl());
+  return preg_replace('/\?.*/', '', myurl());
 }
 
 # returns an image object berisi thumbnail, tinggal dioutput pake imagepng(...), etc.
