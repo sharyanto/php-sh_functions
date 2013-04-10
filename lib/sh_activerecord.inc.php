@@ -488,6 +488,8 @@ function '.$fname.'_ajax_submit(button) {
         }
         if (isset($f['jsfocus']) && $f['jsfocus'] && !isset($focus_info)) $focus_info = array($n, $f['jsfocus']);
       }
+      if (isset($f['description']))
+        $html .= "<br>$f[description]";
       if ($j < count($vv)) $html .= "<br>\n";
     }
 
