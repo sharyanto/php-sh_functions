@@ -8,6 +8,10 @@ function grid_exportcsv(&$grid) {
   return _grid($grid, 'exportcsv');
 }
 
+function grid_export(&$grid, $export_name) {
+  return _grid($grid, 'export', $export_name);
+}
+
 function grid_urlprefix(&$grid) {
   return _grid($grid, 'urlprefix');
 }
@@ -25,7 +29,7 @@ function _csvq($str_or_array) {
 }
 
 # func: genhtml, exportcsv, urlprefix
-function _grid(&$grid, $func) {
+function _grid(&$grid, $func, $funcarg=null) {
 
   # utk template substitution
   $grid_vars = array();
@@ -369,7 +373,7 @@ function '.$form_name.'_dialog(url) {
     if ($res !== "") $sql_wheres[] = "($res)";
   }}
 
-  $no_paging = $func == 'exportcsv' ? true : false;
+  $no_paging = ($func == 'exportcsv' || $func == 'export') ? true : false;
 
   if ((!isset($grid['simple_paging']) || !$grid['simple_paging']) && !$no_paging) {
     if (isset($grid['row_count_func'])) {
@@ -444,7 +448,7 @@ function '.$form_name.'_dialog(url) {
     if (isset($grid['debug_timesql']) && $grid['debug_timesql']) echo "DEBUG: sql (get rows) time=",sprintf("%.3fs", $time2-$time1),"<br>";
     $rows = array();
     while ($row = mysql_fetch_assoc($res)) {
-      if (isset($grid['sqlresult_postprocfunc'])) $grid['sqlresult_postprocfunc'](&$row);
+      if (isset($grid['sqlresult_postprocfunc'])) $grid['sqlresult_postprocfunc']($row);
       $rows[] = $row;
     }
     #print_r($rows);
@@ -467,7 +471,9 @@ function '.$form_name.'_dialog(url) {
   $grid_vars['_item_start'] = $item_start;
   $grid_vars['_item_end'] = $item_end;
 
-  $show_csv_export_link = isset($grid['show_csv_export_link']) ? $grid['show_csv_export_link'] : false;
+  $show_export_links = isset($grid['show_export_links']) ? $grid['show_export_links'] :
+    (isset($grid['show_csv_export_link']) ? $grid['show_csv_export_link'] : # old config name
+     false);
 
 # build display
 
@@ -507,8 +513,13 @@ function '.$form_name.'_dialog(url) {
   # -- paging (+export link) bar
   $ajax = isset($grid['ajax_paging']) && $grid['ajax_paging'];
   $_html_paging_bar  = "<tr><td align=left>";
-  if ($show_csv_export_link) {
+  if ($show_export_links) {
     $_html_paging_bar .= "<a href=$self?_action=exportcsv&_sort=$sort&_sort2=$sort2&_sort3=$sort3$filters_urlp$ba_urlp>"._t("export_to_csv")."</a>";
+    if (isset($grid['extra_exports'])) {
+      foreach ($grid['extra_exports'] as $exp) {
+        $_html_paging_bar .= " <a href=$self?_action=export&_export=$exp[name]&_sort=$sort&_sort2=$sort2&_sort3=$sort3$filters_urlp$ba_urlp>$exp[title]</a>";
+      }
+    }
   }
   $_html_paging_bar .= "</td><td align=right>";
   $_html_paging_bar .= (isset($row_count) ?
@@ -862,6 +873,19 @@ function '.$form_name.'_dialog(url) {
 
   if ($func == 'exportcsv')
     return $csv_header_row . "\n" . join("", $csv_data_rows);
+
+  if ($func == 'export') {
+    $export_name = $funcarg;
+    $exp = null;
+    foreach ($grid['extra_exports'] as $exp0) {
+      if ($exp0['name'] == $export_name) {
+        $exp = $exp0;
+        break;
+      }
+    }
+    if (!$exp) die("ERR20150508A: Unknown export format '".htmlentities($export_name)."'");
+    return $exp['function'](array('rows'=>$rows));
+  }
 
   while ($i < $page_size) {
     $html_data_rows[] = "  <tr style='display: none' class=dataRow id={$form_name}_row_$i></tr>\n";
