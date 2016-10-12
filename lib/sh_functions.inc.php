@@ -1,6 +1,7 @@
 <?
 
-$SH_VERSION = "2015-05-08";
+$SH_VERSION = "20161012";
+$SH_DATE    = "2016-10-12";
 
 require_once dirname(__FILE__).'/sh_translation.inc.php';
 #load_lang_file("grid.yaml");

@@ -1,0 +1,7 @@
+Revision history for sh-functions library
+
+20161012  2016-10-12 (Steven Haryanto)
+
+          [ENHANCEMENTS]
+
+          - grid: Add 'extra_params' for grid action.
