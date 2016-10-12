@@ -655,7 +655,22 @@ function '.$form_name.'_dialog(url) {
     $classes = array();
     if ($ajax) $classes[] = "ajaxAction";
     if (isset($action['class'])) $classes[] = $action['class'];
+
     $html_af_bar .= "    <td>";
+
+    $extra_params = "";
+    if (isset($action['extra_params']) && $action['extra_params']) {
+      foreach($action['extra_params'] as $param_spec) {
+        $name = $param_spec['name'];
+        $var_name = "_extra_param_$name";
+        $extra_params .=
+          "var $var_name".(isset($param_spec['default']) ? "=".jsstring_quote($param_spec['default']) : '').';'.
+          "$var_name = prompt(".jsstring_quote($param_spec['prompt']).",$var_name);".
+          "if($var_name == null) return false;".
+          "this.form.elements[".jsstring_quote($name)."].value=$var_name;";
+        $html_af_bar .= "<input type=hidden name=\"$name\">";
+      }
+    }
     $html_af_bar .= "<input type=submit".
       (count($classes) ? " class=\"".join(" ", $classes)."\"" : "").
       (isset($action['name']) ? " name=_action:$action[name]" : " name=_action").
@@ -663,6 +678,7 @@ function '.$form_name.'_dialog(url) {
       (isset($action['target']) ? "this.form.target='$action[target]';" : "this.form.target='';").
       (isset($action['need_rows']) && $action['need_rows'] ? "if(!{$form_name}_some_cb_selected()){alert('"._t("need_rows")."');return false}" : "").
       (isset($action['jsconfirm']) && $action['jsconfirm'] ? "if(!confirm(".jsstring_quote(isset($action['confirm_text']) ? $action['confirm_text'] : _t("are_you_sure"))."))return false;" : "").
+      $extra_params.
       # XXX pre_ajax_commands
       ($ajax == 'update' ? "{$form_name}_ajax_submit(this);" : "").
       ($ajax == 'dialog' ? "{$form_name}_dialog({$form_name}_submit2url(this));" : "").
@@ -684,7 +700,7 @@ function '.$form_name.'_dialog(url) {
     $html_af_bar .= "</select></td>\n";
   }
 
-  $html_af_bar .= "    <input type=hidden name=_done value=\"".htmlentities($urlprefix, ENT_COMPAT, "UTF-8")."\">\n";
+  $html_af_bar .= "    <input type=hidden name=_done value=\"".htmlentities($urlprefix, ENT_COMPAT, "UTF-8")."\" />\n";
   $html_af_bar .= "  </tr>\n</table>\n\n";
 
 

@@ -283,6 +283,19 @@ jika diset 1, maka saat user mengklik akan muncul javascript confirm dialog dulu
 action akan dibatalkan jika user tidak mengconfirm Yes. dapat digunakan pada action2x
 yang dianggap berbahaya seperti Delete/Hapus.
 
+** extra_params => ARRAY (optional)
+
+jika diset, akan menampilkan satu atau lebih javascript dialog untuk menanyakan
+nilai parameter yang akan dikirimkan bersama action.
+
+contoh:
+
+ "extra_params" => array(
+   array("name" => "foo", "prompt" => "Masukkan nilai foo", "default" => "123"),
+   array("name" => "bar", "prompt" => "Masukkan nilai bar"),
+ )
+
+
 ** ajax => STRING (optional, default '')
 
 pilihan: 'update', 'dialog'
