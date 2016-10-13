@@ -650,6 +650,8 @@ function '.$form_name.'_dialog(url) {
   #XXX didisabled dulu
   #if ($filter_active) $html_af_bar .= "&nbsp;&nbsp;<input type=submit name=_action value=\"View All\">";
 
+  $extra_param_fields = array();
+
   if (isset($grid['grid_actions'])) { foreach ($grid['grid_actions'] as $action) {
     $ajax = isset($action['ajax']) ? $action['ajax'] : '';
     $classes = array();
@@ -658,19 +660,23 @@ function '.$form_name.'_dialog(url) {
 
     $html_af_bar .= "    <td>";
 
-    $extra_params = "";
+    $extra_params_html = "";
     if (isset($action['extra_params']) && $action['extra_params']) {
       foreach($action['extra_params'] as $param_spec) {
         $name = $param_spec['name'];
         $var_name = "_extra_param_$name";
-        $extra_params .=
+        $extra_params_html .=
           "var $var_name".(isset($param_spec['default']) ? "=".jsstring_quote($param_spec['default']) : '').';'.
           "$var_name = prompt(".jsstring_quote($param_spec['prompt']).",$var_name);".
           "if($var_name == null) return false;".
           "this.form.elements[".jsstring_quote($name)."].value=$var_name;";
-        $html_af_bar .= "<input type=hidden name=\"$name\">";
+        if (!isset($extra_param_fields[$name])) {
+          $html_af_bar .= "<input type=hidden name=\"$name\">";
+          $extra_param_fields[$name] = true;
+        }
       }
     }
+
     $html_af_bar .= "<input type=submit".
       (count($classes) ? " class=\"".join(" ", $classes)."\"" : "").
       (isset($action['name']) ? " name=_action:$action[name]" : " name=_action").
@@ -678,7 +684,7 @@ function '.$form_name.'_dialog(url) {
       (isset($action['target']) ? "this.form.target='$action[target]';" : "this.form.target='';").
       (isset($action['need_rows']) && $action['need_rows'] ? "if(!{$form_name}_some_cb_selected()){alert('"._t("need_rows")."');return false}" : "").
       (isset($action['jsconfirm']) && $action['jsconfirm'] ? "if(!confirm(".jsstring_quote(isset($action['confirm_text']) ? $action['confirm_text'] : _t("are_you_sure"))."))return false;" : "").
-      $extra_params.
+      $extra_params_html.
       # XXX pre_ajax_commands
       ($ajax == 'update' ? "{$form_name}_ajax_submit(this);" : "").
       ($ajax == 'dialog' ? "{$form_name}_dialog({$form_name}_submit2url(this));" : "").
@@ -686,18 +692,46 @@ function '.$form_name.'_dialog(url) {
       "\">";
     $html_af_bar .= "</td>\n";
   }}
+
   $ajax = isset($grid['ajax_more_actions']) && $grid['ajax_more_actions'];
   if (isset($grid['grid_more_actions']) && count($grid['grid_more_actions'])) {
     $html_af_bar .= "    <td><select name=_more_action".
       ($ajax ? " class=ajaxAction" : "").
-      " onChange=\"if(this.selectedIndex==0)return false;".
-      ($ajax ? "{$form_name}_ajax_submit();this.selectedIndex=0;return false;" : "document.$form_name.submit();").
       "\">".
       "<option value=''>("._t("more_actions").")";
-    foreach ($grid['grid_more_actions'] as $ga) {
-      $html_af_bar .= (isset($ga['name']) ? "<option value=$ga[name]>" : "<option>").$ga['title'];
-    }
-    $html_af_bar .= "</select></td>\n";
+
+    $extra_param_fields_html = "";
+    foreach ($grid['grid_more_actions'] as $action) {
+      $onclick_js = "";
+      $onclick_js .= "if(this.form.elements['_more_action'].selectedIndex==0)return false;";
+      if (isset($action['extra_params']) && $action['extra_params']) {
+        foreach($action['extra_params'] as $param_spec) {
+          $name = $param_spec['name'];
+          $var_name = "_extra_param_$name";
+          if (isset($action['need_rows']) && $action['need_rows']) {
+            $onclick_js .= "if(!{$form_name}_some_cb_selected()){alert('"._t("need_rows")."');return false}";
+          }
+          $onclick_js .=
+            "var $var_name".(isset($param_spec['default']) ? "=".jsstring_quote($param_spec['default']) : '').';'.
+            "$var_name = prompt(".jsstring_quote($param_spec['prompt']).",$var_name);".
+            "if($var_name == null) return false;".
+            "this.form.elements[".jsstring_quote($name)."].value=$var_name;";
+          if (!isset($extra_param_fields[$name])) {
+            $extra_param_fields_html .= "<input type=hidden name=\"$name\">";
+            $extra_param_fields[$name] = true;
+          }
+        } # for extra_params
+      }
+      $onclick_js .= ($ajax ? "{$form_name}_ajax_submit();this.form.elements['_more_action'].selectedIndex=0;return false;" : "document.$form_name.submit();");
+      $html_af_bar .=
+        (isset($action['name']) ? "<option value=\"$action[name]\"" : "<option").
+        " onClick=\"$onclick_js\"".
+        ">".
+        $action['title'];
+    } # for more_action
+    $html_af_bar .= "</select></td>";
+    $html_af_bar .= $extra_param_fields_html;
+    $html_af_bar .= "\n";
   }
 
   $html_af_bar .= "    <input type=hidden name=_done value=\"".htmlentities($urlprefix, ENT_COMPAT, "UTF-8")."\" />\n";
