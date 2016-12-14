@@ -258,7 +258,7 @@ ingin berbeda dari default. will be called with ($sql_wheres).
 
 * sqlresult_postprocfunc => STRING (optional, default=null)
 
-will be called with (&$rows) after sql is executed and $rows filled
+will be called with ($rows) after sql is executed and $rows filled
 with result.
 
 ====yang berhubungan dengan action====

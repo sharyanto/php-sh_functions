@@ -102,11 +102,11 @@ function activerecord_check(&$activerecord, &$tv, $values, $is_adding=true) { # 
   $num_errors = 0;
 
   # validator fase 1 dipanggil sebelum semua field diperiksa. diberi
-  # argumen (&$activerecord, &$tv, $values). return true jika
+  # argumen ($activerecord, $tv, $values). return true jika
   # berhasil, false jika gagal. set $tv['_phase1_error'] jika ada error.
 
   if (isset($activerecord['phase1_validator_func'])) {
-    if (!$activerecord['phase1_validator_func'](&$activerecord, &$tv, $values)) $num_errors++;
+    if (!$activerecord['phase1_validator_func']($activerecord, $tv, $values)) $num_errors++;
   }
 
   foreach ($fields as $f) {
@@ -168,12 +168,12 @@ function activerecord_check(&$activerecord, &$tv, $values, $is_adding=true) { # 
   } # foreach $fields
 
   # validator fase 2 dipanggil setelah semua field diperiksa. diberi
-  # argumen (&$activerecord, &$tv, $values). return true jika
+  # argumen ($activerecord, $tv, $values). return true jika
   # berhasil, false jika gagal. set $tv['_phase2_error'] jika ada error.
 
   if ($num_errors == 0 && isset($activerecord['phase2_validator_func'])) {
     #echo "DEBUG:calling phase2_validator_func:$activerecord[phase2_validator_func]()<br>";
-    if (!$activerecord['phase2_validator_func'](&$activerecord, &$tv, $values)) $num_errors++;
+    if (!$activerecord['phase2_validator_func']($activerecord, $tv, $values)) $num_errors++;
   }
 
   return $num_errors;
