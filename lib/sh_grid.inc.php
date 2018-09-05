@@ -105,6 +105,7 @@ function _grid(&$grid, $func, $funcarg=null) {
   $time1 = microtime(true);
 
   $self = isset($grid['self']) ? $grid['self'] : $_SERVER['PHP_SELF'];
+  $selfprefix = $self . (preg_match('/\?/', $self) ? '&' : '?');
   $form_name = isset($grid['form_name']) ? $grid['form_name'] : 'form1';
 
   # url prefix
@@ -117,7 +118,7 @@ function _grid(&$grid, $func, $funcarg=null) {
     $filters_urlp .= (isset($_REQUEST[$n]) ? "&" . urlencode($n) . "=" . urlencode($_REQUEST[$n]) : "");
   }}
   $ba_urlp = isset($grid['browse_action']) ? "&_action=".urlencode($grid['browse_action']) : "";
-  $urlprefix = $grid_vars["_urlprefix"] = "$self?_page=$page&_sort=$sort$filters_urlp$ba_urlp";
+  $urlprefix = $grid_vars["_urlprefix"] = $selfprefix . "_page=$page&_sort=$sort$filters_urlp$ba_urlp";
 
   if ($func == 'urlprefix') return $urlprefix;
 
@@ -514,10 +515,10 @@ function '.$form_name.'_dialog(url) {
   $ajax = isset($grid['ajax_paging']) && $grid['ajax_paging'];
   $_html_paging_bar  = "<tr><td align=left>";
   if ($show_export_links) {
-    $_html_paging_bar .= "<a href=$self?_action=exportcsv&_sort=$sort&_sort2=$sort2&_sort3=$sort3$filters_urlp$ba_urlp>"._t("export_to_csv")."</a>";
+    $_html_paging_bar .= "<a href={$selfprefix}_action=exportcsv&_sort=$sort&_sort2=$sort2&_sort3=$sort3$filters_urlp$ba_urlp>"._t("export_to_csv")."</a>";
     if (isset($grid['extra_exports'])) {
       foreach ($grid['extra_exports'] as $exp) {
-        $_html_paging_bar .= " <a href=$self?_action=export&_export=$exp[name]&_sort=$sort&_sort2=$sort2&_sort3=$sort3$filters_urlp$ba_urlp>$exp[title]</a>";
+        $_html_paging_bar .= " <a href={$selfprefix}_action=export&_export=$exp[name]&_sort=$sort&_sort2=$sort2&_sort3=$sort3$filters_urlp$ba_urlp>$exp[title]</a>";
       }
     }
   }
@@ -528,7 +529,7 @@ function '.$form_name.'_dialog(url) {
                         ).
     "&nbsp;&nbsp;&nbsp;";
 
-  $url = "$self?_page=1&_sort=$sort&_sort2=$sort2&_sort3=$sort3$filters_urlp$ba_urlp";
+  $url = "{$selfprefix}_page=1&_sort=$sort&_sort2=$sort2&_sort3=$sort3$filters_urlp$ba_urlp";
   $text = _t("first");
   if ($page != 1) {
     $_html_paging_bar .= "<a".
@@ -539,7 +540,7 @@ function '.$form_name.'_dialog(url) {
   }
   $_html_paging_bar .= " | ";
 
-  $url = "$self?_page=".($page-1)."&_sort=$sort&_sort2=$sort2&_sort3=$sort3$filters_urlp$ba_urlp";
+  $url = "{$selfprefix}_page=".($page-1)."&_sort=$sort&_sort2=$sort2&_sort3=$sort3$filters_urlp$ba_urlp";
   $text = _t("previous");
   if ($page != 1) {
     $_html_paging_bar .= "<a".
@@ -550,7 +551,7 @@ function '.$form_name.'_dialog(url) {
   }
   $_html_paging_bar .= " | ";
 
-  $url = "$self?_page=".($page+1)."&_sort=$sort&_sort2=$sort2&_sort3=$sort3$filters_urlp$ba_urlp";
+  $url = "{$selfprefix}_page=".($page+1)."&_sort=$sort&_sort2=$sort2&_sort3=$sort3$filters_urlp$ba_urlp";
   $text = _t("next");
   if ($has_next_page) {
     $_html_paging_bar .= "<a".
@@ -562,7 +563,7 @@ function '.$form_name.'_dialog(url) {
 
   if (isset($row_count)) {
     $_html_paging_bar .= " | ";
-    $url = "$self?_page=$page_count&_sort=$sort&_sort2=$sort2&_sort3=$sort3$filters_urlp$ba_urlp";
+    $url = "{$selfprefix}_page=$page_count&_sort=$sort&_sort2=$sort2&_sort3=$sort3$filters_urlp$ba_urlp";
     $text = _t("last");
     if ($page < $page_count) {
       $_html_paging_bar .= "<a".
@@ -778,7 +779,7 @@ function '.$form_name.'_dialog(url) {
         $newsort3 = $sort3;
       }
       $ajax = isset($grid['ajax_sort']) && $grid['ajax_sort'];
-      $url = "$self?_page=$page&_sort=$newsort&_sort2=$newsort2&_sort3=$newsort3$filters_urlp$ba_urlp";
+      $url = "{$selfprefix}_page=$page&_sort=$newsort&_sort2=$newsort2&_sort3=$newsort3$filters_urlp$ba_urlp";
       $html_header_row .= "<a".
         ($ajax ? " class=ajaxAction onClick=\"{$form_name}_update_grid(this.href);return false;\"" : "").
         " href=$url><b>$col[title]</b></a>";
