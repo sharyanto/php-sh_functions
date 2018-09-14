@@ -349,6 +349,7 @@ function '.$form_name.'_dialog(url) {
           minHeight: "90%",
           width: "90%",
           height: "90%",
+          position: [10, 0],
           onClose: function (dlg) {
             //alert("DEBUG:dialog_ok? "+'.$form_name.'_dialog_ok)
             $.modal.close()
