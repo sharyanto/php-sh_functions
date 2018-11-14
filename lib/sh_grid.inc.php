@@ -648,7 +648,7 @@ function '.$form_name.'_dialog(url) {
       "</td>\n";
   }} # foreach filters ...
   #echo "num_nonhidden_filters=$num_nonhidden_filters\n";
-  if ($num_nonhidden_filters) $html_af_bar .= "    <td><input type=submit".($ajax ? " class=ajaxAction onClick=\"{$form_name}_ajax_submit();return false\"":"")." name=_action:filter value=\""._t("filter")."\"></td>\n";
+  if ($num_nonhidden_filters) $html_af_bar .= "    <td><input type=submit".($ajax ? " class=ajaxAction onClick=\"{$form_name}_ajax_submit();return false\"":"")." name=_action__filter value=\""._t("filter")."\"></td>\n";
   #XXX didisabled dulu
   #if ($filter_active) $html_af_bar .= "&nbsp;&nbsp;<input type=submit name=_action value=\"View All\">";
 
@@ -681,7 +681,7 @@ function '.$form_name.'_dialog(url) {
 
     $html_af_bar .= "<input type=submit".
       (count($classes) ? " class=\"".join(" ", $classes)."\"" : "").
-      (isset($action['name']) ? " name=_action:$action[name]" : " name=_action").
+      (isset($action['name']) ? " name=_action__$action[name]" : " name=_action").
       " value=\"$action[title]\" onClick=\"".
       (isset($action['target']) ? "this.form.target='$action[target]';" : "this.form.target='';").
       (isset($action['need_rows']) && $action['need_rows'] ? "if(!{$form_name}_some_cb_selected()){alert('"._t("need_rows")."');return false}" : "").
